@@ -1,0 +1,24 @@
+package com.example.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.model.Withdraw;
+import com.example.service.WithdrawService;
+
+@RestController
+@RequestMapping("/withdraw")
+public class Withdrawcontroller {
+	@Autowired
+	private WithdrawService service;
+	
+	@PostMapping("/update")
+	public String withdraw(@RequestBody Withdraw withdraw) {
+		withdraw.setTransectiontype("withdraw");
+		return service.withdraw(withdraw);
+	}
+
+}

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;withdraw/src/main/resources/applicatioon.yaml&apos; to &apos;application.yaml&apos;" description="Rename resource &apos;applicatioon.yaml&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/main/resources/applicatioon.yaml" name="application.yaml" stamp="1700683479359" updateReferences="true"/>
+</session>

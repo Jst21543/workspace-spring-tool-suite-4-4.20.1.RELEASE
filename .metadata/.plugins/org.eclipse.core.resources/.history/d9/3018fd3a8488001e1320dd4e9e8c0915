@@ -1,0 +1,11 @@
+package com.example.model;
+
+import lombok.Data;
+
+@Data
+public class Trancefer {
+	private long fromaccountnumber;
+	private long amount;
+	private long toaccountnumber;
+
+}

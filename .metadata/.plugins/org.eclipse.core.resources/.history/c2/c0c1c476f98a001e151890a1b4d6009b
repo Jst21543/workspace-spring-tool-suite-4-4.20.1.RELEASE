@@ -1,0 +1,18 @@
+package com.example.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+@Service
+public class ServiceHistory {
+	
+	@Autowired
+	private RestTemplate template;
+	
+	
+	public void get(long accountnumber) {
+		template.getForObject("http://NEW-ACCOUNT/account/get/"+accountnumber, Account.class);
+	}
+
+}

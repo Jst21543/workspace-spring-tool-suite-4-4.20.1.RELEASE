@@ -1,0 +1,54 @@
+package com.example.service;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.example.model.Transfer;
+import com.example.repository.TransferRepository;
+import com.example.vo.Account;
+
+
+
+
+@Service
+public class TransferService {
+	
+	@Autowired
+	private RestTemplate template;
+	@Autowired
+	private TransferRepository repo;
+	
+	public String transfer(Transfer trans) {
+		String res="";
+		Account from=template.getForObject("http://ACCOUNT/account/get/"+trans.getAccountnumber(), Account.class);
+		Account to=template.getForObject("http://ACCOUNT/account/get/"+trans.getToaccountnumber(), Account.class);
+		
+		if(from.getAmount()>trans.getAmount()) {
+			to.setAmount(to.getAmount()+trans.getAmount());
+			from.setAmount(from.getAmount()-trans.getAmount());
+			trans.setTransectiontype("deposit");
+			
+			HttpHeaders headers=new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			HttpEntity<Account> entity1=new HttpEntity<>(from,headers);
+			HttpEntity<Account> entity2=new HttpEntity<>(to,headers);
+			
+			template.exchange("http://ACCOUNT/account/update/"+trans.getAccountnumber(), HttpMethod.POST, entity1, String.class);
+			template.exchange("http://ACCOUNT/account/update/"+trans.getToaccountnumber(), HttpMethod.POST, entity2, String.class);
+			res="transfer success";
+			repo.save(trans);
+		}
+		else {
+			res="insuficient balance";
+		}
+		return res;
+	}
+	
+
+}

@@ -1,0 +1,8 @@
+package com.example.service;
+
+import com.example.model.Deposite;
+
+public interface ServiceInteface {
+	public Deposite deposit(Deposite deposit);
+
+}

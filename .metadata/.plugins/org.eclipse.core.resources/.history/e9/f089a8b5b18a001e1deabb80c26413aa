@@ -1,0 +1,28 @@
+package com.example.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.example.model.Account;
+import com.example.model.Withdraw;
+
+@Service
+public class WithdrawService {
+	@Autowired
+	private RestTemplate template;
+	
+	public String withdraw(Withdraw withdraw) {
+		HttpEntity<Account> account=template.getForEntity("http://NEW-ACCOUNT/account/get/"+withdraw.getAccountnumber(), Account.class);
+		if(account.getBody().getAmount()>=withdraw.getAmount()) {
+			account.getBody().setAmount(account.getBody().getAmount()-withdraw.getAmount());
+			template.postForEntity("http://NEW-ACCOUNT/account/update/"+withdraw.getAccountnumber(), account, Account.class);
+			return "withdraw success";
+		}
+		else {
+			return "insuficient balance";
+		}
+	}
+
+}

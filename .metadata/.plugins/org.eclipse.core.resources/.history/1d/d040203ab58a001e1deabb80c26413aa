@@ -1,0 +1,46 @@
+server:
+  port: 9000
+spring:
+  application:
+    name: BANK-GATEWAY
+  cloud:
+    gateway:
+      routes:
+      - id: NEW-ACCOUNT
+        uri:
+          lb://NEW-ACCOUNT/
+        predicates:
+        - Path=/account/**
+          
+      - id: DEPOSITE
+        uri:
+          lb://DEPOSITE/
+        predicates:
+        - Path=/deposit/**
+          
+      - id: WITHDRAW
+        uri:
+          lb://WITHDRAW/
+        predicates:
+        - Path=/withdraw/**
+          
+      - id: TRANSECTIONS
+        uri:
+          lb://TRANSECTIONS/
+        predicates:
+        - Path=/transection/**
+          
+      - id: TRANSFER
+        uri:
+          lb://TRANSFER/
+        predicates:
+        - Path=/transfer/**
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http:localhost:8761/eureka/
+  instance:
+    hostname: localhost
+    

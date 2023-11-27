@@ -1,0 +1,18 @@
+package com.example.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.example.model.Withdraw;
+
+@Service
+public class WithdrawService {
+	@Autowired
+	private RestTemplate template;
+	
+	public String withdraw(Withdraw withdraw) {
+		template.getForEntity("http://NEW-ACCOUNT/account/get/"+withdraw.getAccountnumber(), null)
+	}
+
+}

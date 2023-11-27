@@ -1,0 +1,27 @@
+package com.example.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.model.Transections;
+import com.example.repository.TransectionRepository;
+@Service
+public class ServiceImplementation implements TransectionServiceInterface {
+	@Autowired
+	private TransectionRepository repo;
+
+	@Override
+	public Transections save(Transections transection) {
+		
+		return repo.save(transection);
+	}
+
+	@Override
+	public List<Transections> get(long accountnumber) {
+		
+		return repo.getByAccountnumber(accountnumber);
+	}
+
+}

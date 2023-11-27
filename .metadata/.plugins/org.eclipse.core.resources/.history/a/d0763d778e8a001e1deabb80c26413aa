@@ -1,0 +1,12 @@
+package com.example.service;
+
+import org.springframework.stereotype.Component;
+
+import com.example.model.Transections;
+
+@Component
+public interface TransectionServiceInterface {
+	public Transections save(Transections transection);
+	public Transections get(Transections transection);
+
+}

@@ -1,0 +1,39 @@
+package com.example.service;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.example.model.Transfer;
+import com.example.vo.Account;
+
+
+
+
+@Service
+public class TransferService {
+	
+	@Autowired
+	private RestTemplate template;
+	public String transfer(Transfer trans) {
+		String res="";
+		HttpEntity<Account> from=template.getForEntity("http://NEW-ACCOUNT/get/"+trans.getAccountnumber(),Account.class );
+		HttpEntity<Account> to=template.getForEntity("http://NEW-ACCOUNT/get/"+trans.getToaccountnumber(),Account.class);
+		if(from.getBody().getAmount()>trans.getAmount()) {
+			to.getBody().setAmount(to.getBody().getAmount()+trans.getAmount());
+			from.getBody().setAmount(from.getBody().getAmount()-trans.getAmount());
+			
+			template.postForObject("http://NEW-ACCOUNT/update/"+trans.getAccountnumber(), from, Account.class);
+			template.postForObject("http://NEW-ACCOUNT/get/"+trans.getToaccountnumber(), to, Account.class);
+			res="transfer success";
+		}
+		else {
+			res="insuficient balance";
+		}
+		return res;
+	}
+	
+
+}

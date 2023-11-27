@@ -1,0 +1,43 @@
+package com.example.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.example.model.Account;
+import com.example.model.Deposite;
+@Service
+public class Serviceimp implements DepositeServiceInteface {
+	@Autowired
+	private RestTemplate template;
+	@Override
+	public String deposit(Deposite deposit) {
+		HttpEntity<Account> account=template.getForEntity("http://NEW-ACCOUNT/account/get/"+deposit.getAccountnumber(), Account.class);
+		account.getBody().setAmount(account.getBody().getAmount()+deposit.getAmount());
+		template.postForEntity("http://NEW-ACCOUNT/account/update/"+deposit.getAccountnumber(), account, Account.class);
+		
+		HttpHeaders headers=new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		template.setMessageConverters(getJsonMessageConverters());
+		HttpEntity<Deposite> entity=new HttpEntity<Deposite>(deposit, headers);
+		template.exchange("http://TRANSECTIONS/transection/post",HttpMethod.POST, entity, Deposite.class);
+		return "Deposited";
+		
+	
+	}
+	private List<HttpMessageConverter<?>> getJsonMessageConverters() {
+	    List<HttpMessageConverter<?>> converters = new ArrayList<>();
+	    converters.add(new MappingJackson2HttpMessageConverter());
+	    return converters;
+	}
+
+}

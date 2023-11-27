@@ -1,0 +1,20 @@
+package com.example.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.example.model.Deposite;
+@Service
+public class Serviceimp implements DepositeServiceInteface {
+	@Autowired
+	private RestTemplate template;
+	@Override
+	public Deposite deposit(Deposite deposit) {
+		template.getForEntity("http://NEW-ACCOUNT/account/get/"+deposit.getAccountnumber(), Account.Class);
+		return deposit;
+		
+	
+	}
+
+}

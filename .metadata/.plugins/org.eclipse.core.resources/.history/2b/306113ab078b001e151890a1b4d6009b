@@ -1,0 +1,29 @@
+package com.example.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.example.model.Account;
+import com.example.model.Response;
+import com.example.model.Transections;
+
+@Service
+public class ServiceHistory {
+	
+	@Autowired
+	private RestTemplate template;
+	@Autowired
+	private Response response;
+	
+	public Response get(long accountnumber) {
+		Account account=template.getForObject("http://NEW-ACCOUNT/account/get/"+accountnumber, Account.class);
+		ResponseEntity<Transections> transections=template.postForEntity("http://TRANSECTIONS/transection/get/"+accountnumber, HttpMethod.GET, Transections.class);
+		response.setAccount(account);
+		response.setTransections(transections);
+		return response;
+	}
+
+}

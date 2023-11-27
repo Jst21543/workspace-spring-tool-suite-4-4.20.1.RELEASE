@@ -1,0 +1,29 @@
+package com.example.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.example.model.Transfer;
+import com.example.vo.Account;
+
+@Service
+public class TransferService {
+	@Autowired
+	private RestTemplate template;
+	public String transfer(Transfer trans) {
+		String res="";
+		Account account=template.getForObject("http://NEW-ACCOUNT/get/"+trans.getAccountnumber(),Account.class );
+		
+		if(account.getAmount()>trans.getAmount()) {
+			Account account1=template.getForObject("http://NEW-ACCOUNT/get/"+trans.getToaccountnumber(),Account.class);
+			account1.setAmount(trans.getAmount()+account1.getAmount());
+			account.setAmount(account.getAmount()-trans.getAmount());
+		}
+		else {
+			res="insuficient balance";
+		}
+		return res;
+	}
+
+}

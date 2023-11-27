@@ -1,0 +1,73 @@
+package com.example.service;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.example.model.Transfer;
+import com.example.repository.TransferRepository;
+import com.example.vo.Account;
+import com.example.vo.Transections;
+
+
+
+
+@Service
+public class TransferService {
+	//autowiring the objects to respected class variables
+	@Autowired
+	private RestTemplate template;
+	@Autowired
+	private TransferRepository repo;
+	@Autowired
+	private Transections transection;
+	
+	public String transfer(Transfer trans) {
+		String res="";
+		
+		//getting account details by parsing the account number to account template
+		Account from=template.getForObject("http://ACCOUNT/account/get/"+trans.getAccountnumber(), Account.class);
+		Account to=template.getForObject("http://ACCOUNT/account/get/"+trans.getToaccountnumber(), Account.class);
+		
+		//setting the of the value of transactions class
+		transection.setAmount(trans.getAmount());
+		
+		//this condition is for checking the amount 
+		if(from.getAmount()>trans.getAmount()) {
+			
+			//here i'm doing subtraction operation to amount sending account
+			from.setAmount(from.getAmount()-trans.getAmount());
+			
+			//here i'm doing addition operation to amount receiving account
+			to.setAmount(to.getAmount()+trans.getAmount());
+			HttpHeaders headers=new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			HttpEntity<Account> entity1=new HttpEntity<>(from,headers);
+			HttpEntity<Account> entity2=new HttpEntity<>(to,headers);
+			
+			transection.setTransectiontype("debit");
+			transection.setAccountnumber(trans.getAccountnumber());
+			HttpEntity<Transections> transfer=new HttpEntity<>(transection,headers);
+			template.exchange("http://TRANSECTIONS/transection/post", HttpMethod.POST, transfer, String.class);
+			template.exchange("http://ACCOUNT/account/update/"+trans.getAccountnumber(), HttpMethod.POST, entity1, String.class);
+			transection.setTransectiontype("credit");
+			transection.setAccountnumber(trans.getToaccountnumber());
+			HttpEntity<Transections>tranfer2=new HttpEntity<>(transection,headers);
+			template.exchange("http://TRANSECTIONS/transection/post", HttpMethod.POST, tranfer2, String.class);
+			template.exchange("http://ACCOUNT/account/update/"+trans.getToaccountnumber(), HttpMethod.POST, entity2, String.class);
+			res="transfer success";
+			repo.save(trans);
+		}
+		else {
+			res="insuficient balance";
+		}
+		return res;
+	}
+	
+
+}

@@ -1,0 +1,33 @@
+package com.example.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.example.model.Account;
+import com.example.model.Response;
+import com.example.model.Transections;
+
+@Service
+public class ServiceHistory {
+	
+	@Autowired
+	private RestTemplate template;
+	@Autowired
+	private Response response;
+	
+	public Response get(long accountnumber) {
+		Account account=template.getForObject("http://ACCOUNT/account/get/"+accountnumber, Account.class);
+		template.getMessageConverters();
+		ResponseEntity<java.util.List<Transections>>  list=template.exchange("http://TRANSECTIONS/transection/get/"+accountnumber, HttpMethod.GET, null, new ParameterizedTypeReference<java.util.List<Transections>>() {});
+		response.setAccount(account);
+		java.util.List<Transections> finalList=list.getBody();
+		response.setTransections(finalList);
+		
+		return response;
+	}
+
+}

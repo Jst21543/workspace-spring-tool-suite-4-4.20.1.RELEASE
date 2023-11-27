@@ -1,0 +1,25 @@
+package com.example.service;
+
+import java.awt.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.example.model.Account;
+
+@Service
+public class ServiceHistory {
+	
+	@Autowired
+	private RestTemplate template;
+	
+	
+	public void get(long accountnumber) {
+		Account account=template.getForObject("http://NEW-ACCOUNT/account/get/"+accountnumber, Account.class);
+		List<Transections> transections=template.getForEntity("http://TRANSECTIONS/transection/get/"+accountnumber, HttpMethod.GET, List.class);
+		
+	}
+
+}
