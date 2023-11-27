@@ -25,7 +25,7 @@ public class WithdrawService {
 			//here setting amount in account class
 			account.getBody().setAmount(account.getBody().getAmount()-withdraw.getAmount());
 			//here sending account HttpEntity to account template
-			template.postForEntity("http://ACCOUNT/account/update/"+withdraw.getAccountnumber(), account, Account.class);
+			template.exchange("http://ACCOUNT/account/update/"+withdraw.getAccountnumber(),HttpMtehod.POST, account, Account.class);
 			//here stting httpHeaders and contentType of response
 			HttpHeaders headers=new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
